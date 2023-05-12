@@ -1,0 +1,182 @@
+basePath: /v1
+definitions:
+  entitiy.Task:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  http.createInput:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  http.response:
+    properties:
+      error:
+        example: message
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: stchikhichin@gmail.com
+    name: fastwalker
+    url: http://www.github.com/iceforsik228
+  description: This is a swagger specification todo api.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: ToDo API
+  version: "1.0"
+paths:
+  /task:
+    post:
+      consumes:
+      - application/json
+      description: Create one task
+      parameters:
+      - description: Create Task input
+        in: body
+        name: Task
+        schema:
+          $ref: '#/definitions/http.createInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Create task
+      tags:
+      - tasks
+  /task/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete task by ID
+      parameters:
+      - description: Task id
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entitiy.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete task
+      tags:
+      - tasks
+    get:
+      consumes:
+      - application/json
+      description: Get task by ID
+      parameters:
+      - description: Task id
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entitiy.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get task
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Update task by ID
+      parameters:
+      - description: Update Task input
+        in: body
+        name: Task
+        schema:
+          $ref: '#/definitions/http.createInput'
+      - description: Task id
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entitiy.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update task
+      tags:
+      - tasks
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entitiy.Task'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get tasks
+      tags:
+      - tasks
+swagger: "2.0"
