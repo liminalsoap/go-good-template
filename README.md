@@ -1,0 +1,1 @@
+``go good template``
