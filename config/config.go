@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"os"
 )
 
 type Config struct {
@@ -36,5 +37,10 @@ func NewConfig() (*Config, error) {
 	if err := viper.Unmarshal(&config); err != nil {
 		return nil, err
 	}
+
+	if os.Getenv("postgresql_url") != "" {
+		config.Postgres.PostgresqlUrl = os.Getenv("postgresql_url")
+	}
+
 	return config, nil
 }

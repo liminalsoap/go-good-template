@@ -63,7 +63,7 @@ func (r taskRoutes) CreateOne(c *gin.Context) {
 		Title:       input.Title,
 		Description: input.Description,
 	}
-	if err := r.useCase.Create(task); err != nil {
+	if err := r.useCase.Create(c.Request.Context(), task); err != nil {
 		r.log.Errorf("err: %s", err)
 		errorResponse(c, http.StatusInternalServerError, "failed to create task")
 
@@ -93,7 +93,7 @@ func (r taskRoutes) GetById(c *gin.Context) {
 		return
 	}
 
-	task, err := r.useCase.GetById(uint(id))
+	task, err := r.useCase.GetById(c.Request.Context(), uint(id))
 	if err != nil {
 		r.log.Errorf("err: %s", err)
 		errorResponse(c, http.StatusNotFound, "Task not found")
@@ -137,7 +137,7 @@ func (r taskRoutes) Update(c *gin.Context) {
 		Title:       input.Title,
 		Description: input.Description,
 	}
-	updatedTask, err := r.useCase.Update(uint(id), task)
+	updatedTask, err := r.useCase.Update(c.Request.Context(), uint(id), task)
 	if err != nil {
 		r.log.Errorf("err: %s", err)
 		errorResponse(c, http.StatusInternalServerError, "failed to update task")
@@ -168,7 +168,7 @@ func (r taskRoutes) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := r.useCase.Delete(uint(id)); err != nil {
+	if err := r.useCase.Delete(c.Request.Context(), uint(id)); err != nil {
 		r.log.Errorf("err: %s", err)
 		errorResponse(c, http.StatusNotFound, err.Error())
 
@@ -188,7 +188,7 @@ func (r taskRoutes) Delete(c *gin.Context) {
 //	@failure		500	{object}	response
 //	@Router			/tasks [get]
 func (r taskRoutes) List(c *gin.Context) {
-	tasks, err := r.useCase.List()
+	tasks, err := r.useCase.List(c.Request.Context())
 	if err != nil {
 		r.log.Errorf("err: %s", err)
 		errorResponse(c, http.StatusInternalServerError, "internal error")

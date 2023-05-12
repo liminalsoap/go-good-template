@@ -15,9 +15,9 @@ func NewTaskRepo(pg *postgres.Postgres) *TaskRepo {
 	return &TaskRepo{pg}
 }
 
-func (t TaskRepo) Create(task entitiy.Task) error {
+func (t TaskRepo) Create(ctx context.Context, task entitiy.Task) error {
 	_, err := t.Conn.Exec(
-		context.Background(),
+		ctx,
 		"INSERT INTO tasks(title, description) values ($1, $2)",
 		task.Title,
 		task.Description,
@@ -25,9 +25,9 @@ func (t TaskRepo) Create(task entitiy.Task) error {
 	return err
 }
 
-func (t TaskRepo) Update(id uint, task entitiy.Task) (entitiy.Task, error) {
+func (t TaskRepo) Update(ctx context.Context, id uint, task entitiy.Task) (entitiy.Task, error) {
 	_, err := t.Conn.Exec(
-		context.Background(),
+		ctx,
 		"UPDATE tasks SET updated_at=now(), title=$1, description=$2 WHERE id = $3",
 		task.Title,
 		task.Description,
@@ -37,16 +37,16 @@ func (t TaskRepo) Update(id uint, task entitiy.Task) (entitiy.Task, error) {
 		return entitiy.Task{}, err
 	}
 
-	updatedTask, err := t.GetById(id)
+	updatedTask, err := t.GetById(ctx, id)
 	if err != nil {
 		return entitiy.Task{}, err
 	}
 	return updatedTask, nil
 }
 
-func (t TaskRepo) DeleteById(id uint) error {
+func (t TaskRepo) DeleteById(ctx context.Context, id uint) error {
 	flag, err := t.Conn.Exec(
-		context.Background(),
+		ctx,
 		"DELETE FROM tasks WHERE id = $1",
 		id,
 	)
@@ -56,10 +56,10 @@ func (t TaskRepo) DeleteById(id uint) error {
 	return err
 }
 
-func (t TaskRepo) GetById(id uint) (entitiy.Task, error) {
+func (t TaskRepo) GetById(ctx context.Context, id uint) (entitiy.Task, error) {
 	var task entitiy.Task
 	err := t.Conn.QueryRow(
-		context.Background(),
+		ctx,
 		"SElECT * FROM tasks WHERE id = $1", id).Scan(
 		&task.Id,
 		&task.CreatedAt,
@@ -73,8 +73,8 @@ func (t TaskRepo) GetById(id uint) (entitiy.Task, error) {
 	return task, nil
 }
 
-func (t TaskRepo) List() (*[]entitiy.Task, error) {
-	rows, err := t.Conn.Query(context.Background(), "SELECT * FROM tasks")
+func (t TaskRepo) List(ctx context.Context) (*[]entitiy.Task, error) {
+	rows, err := t.Conn.Query(ctx, "SELECT * FROM tasks")
 	if err != nil {
 		return nil, err
 	}
