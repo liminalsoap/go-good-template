@@ -1,5 +1,4 @@
-POSTGRESQL_URL=postgres://root:secret@localhost:5432/todo # it's local url db, i'm not foolish =)
-
+POSTGRESQL_URL=postgres://root:secret@localhost:5432/todo # it's local url db
 migrate-create:
 	migrate create -ext sql -dir migrations/ -seq 'migrate_name'
 .PHONY: migrate-create
